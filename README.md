@@ -39,8 +39,4 @@ This project enhances the usability of the passenger car sales data by ensuring 
 
 
 
-## Data Integrity and Best Practices
-
-The systematic execution of these procedures is paramount in ensuring data integrity. The methodical approach adheres to industry standards and best practices, contributing to the reliability and robustness of the resultant dataset. This refined dataset is well-prepared for subsequent analyses and visualizations, providing a solid foundation for meaningful insights.
-
-####Do check out the folder with the document make sure to unzip it 
+#### Do check out the folder with the document make sure to unzip it 
