@@ -4,33 +4,40 @@
 
 This repository houses a project that involves a comprehensive approach to managing datasets obtained from the International Organization of Motor Vehicle Manufacturers (OICA). The workflow is characterized by a meticulous process, encompassing various steps such as data loading, refining nomenclature, restructuring the data format, converting temporal variables to numeric, excluding non-country entries, rearranging rows for coherence, preserving the cleaned dataset, and culminating in the visualization of the refined data.
 
-## Project Workflow
+## Project Steps
 
-The project follows a systematic workflow:
+### 1. Loading the Data
+   - Loaded data from an Excel file using the `read_excel` function.
 
-1. **Data Loading:**
-   - The dataset is loaded from the International Organization of Motor Vehicle Manufacturers (OICA).
+### 2. Cleaning the Names
+   - Cleaned column names using the `janitor` package, ensuring consistency and clarity.
+   - Renamed columns, including the conversion of non-numeric data types to numeric.
+   - Addressed missing values in columns.
 
-2. **Refining Nomenclature:**
-   - Nomenclature inconsistencies are addressed to enhance dataset clarity and consistency.
+### 3. Reshaping the Data
+   - Used the `pivot_longer` function to transform the dataset into a long format, focusing on columns related to sales for each year.
+   - Selected relevant columns (country, year, and sale) for further analysis.
 
-3. **Restructuring Data Format:**
-   - The data format is restructured for improved organization and ease of analysis.
+### 4. Converting Year to a Number
+   - Separated the year from the column name and converted it to a numeric format for better analysis.
 
-4. **Converting Temporal Variables:**
-   - Temporal variables are converted to numeric format for standardized representation.
+### 5. Dropping Rows That Aren't Countries
+   - Removed rows corresponding to regions and entities that are not individual countries.
 
-5. **Excluding Non-Country Entries:**
-   - Entries that are not associated with countries are excluded to focus on relevant data.
+### 6. Rearranging the Rows
+   - Arranged the dataset by country and year for better organization and readability.
 
-6. **Rearranging Rows for Coherence:**
-   - Rows are rearranged systematically to ensure coherence and logical flow of data.
+### 7. Saving the Cleaned File
+   - Saved the cleaned dataset as a CSV file for future use.
 
-7. **Preserving the Cleaned Dataset:**
-   - The cleaned dataset is preserved to maintain data integrity and facilitate reproducibility.
+## Summary Visualization
+   - Generated a summary visualization using the `ggplot2` package to showcase passenger car sales trends over the years for China, the United States of America, and other countries.
 
-8. **Visualization of Refined Data:**
-   - The project culminates in the visualization of the refined data, providing insights for analytical applications.
+This project enhances the usability of the passenger car sales data by ensuring data cleanliness, organization, and visualization, providing a solid foundation for further analysis and insights.
+
+
+
+
 
 ## Data Integrity and Best Practices
 
