@@ -1,0 +1,173 @@
+---
+title: "Data Cleaning"
+subtitle: "Data set from - International Organization of Motor Vehicle Manufacturers(OICA)"
+author: Harshita Bharadwaj
+date: September 25, 2023 
+format:
+  html:
+    toc: true
+    theme: darkly
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+    warning = FALSE,
+    message = FALSE,
+    fig.path = "figs/", # Folder where rendered plots are saved
+    fig.width = 7.252, # Default plot width
+    fig.height = 4, # Default plot height
+    fig.retina = 3, # For better plot resolution
+    comment = "#>"
+)
+
+# Load libraries
+library(tidyverse)
+library(readxl)
+library(here)
+library(janitor)
+```
+
+# **Background**
+
+In this project, we employ a dataset procured from the International Organization of Motor Vehicle Manufacturers (OICA). The central objective is to refine a raw data file encapsulating sales data for passenger cars across diverse countries spanning the years 2019, 2020, 2021, and 2022. The primary emphasis is on the transformation of the initially disorganized dataset into a tidy, long-format data frame. The anticipated result entails three pivotal columns: country, year, and sales. This transformative process ensures the development of a meticulously organized and structured dataset, fostering seamless visualization and analysis of the passenger car sales data. The project further encompasses the integration of visualizations for the cleaned dataset, enhancing the communicative efficacy of the analytical findings.
+
+# 1. Loading the data
+
+```{r}
+# Write code here
+path=here("data","pc_sales_2021.xlsx")
+
+pc_sales <- read_excel(path, sheet="pc_sales",
+                       skip=3 )
+
+```
+
+# 2. Cleaning the names
+
+```{r}
+# Write code here
+library("janitor")
+pc_sales_cleannames <- pc_sales %>% 
+    clean_names() %>% 
+    rename(country=regions_countries)
+
+glimpse(pc_sales_cleannames)
+View(pc_sales_cleannames)
+summary(pc_sales_cleannames)
+```
+
+# 3. Reshapeing the data
+
+```{r}
+# Write code here
+pc_sales_long <-  pc_sales_cleannames %>%  
+    pivot_longer(cols = q1_q4_2019:q1_q4_2021,
+                 names_to = "year",
+                 values_to = "sale",
+                 values_drop_na = TRUE) %>%select(country,year,sale)
+
+View(pc_sales_long)
+```
+
+# 4. Converting `year` to a number
+
+```{r}
+# Write code here
+sep_pcsalles <- pc_sales_long %>% separate(year,into=c("drop1","drop2","year"), sep="_") %>% 
+    select(-drop1,-drop2) %>% 
+    mutate(year = as.numeric(year))
+
+View(sep_pcsalles)
+glimpse(sep_pcsalles)
+
+typeof(sep_pcsalles$year)
+```
+
+# 5. Droping rows that aren't countries
+
+```{r}
+regions <- c(
+    "EUROPE",
+    "EU 27 countries + EFTA + UK",
+    "OTHER COUNTRIES",
+    "RUSSIA, TURKEY & OTHER EUROPE",
+    "AMERICA",
+    "NAFTA",
+    "AFRICA",
+    "CENTRAL & SOUTH AMERICA",
+    "ASIA/OCEANIA/MIDDLE EAST",
+    "ASEAN",
+    "ALL COUNTRIES/REGIONS",
+    "OTHER COUNTRIES/REGIONS",
+    "TOTAL OICA MEMBERS"
+)
+
+# Write code here
+
+filter_regions_pcsale <- sep_pcsalles %>% filter(!country %in% regions) %>% 
+    mutate(country=str_to_title(country))
+
+View(filter_regions_pcsale)
+```
+
+# 6. Rearranging the rows
+
+```{r}
+# Write code here
+rearrange_country_pcsales <- filter_regions_pcsale %>% arrange(country,year) 
+
+View(rearrange_country_pcsales)
+```
+
+# 7. Saving the cleaned file
+
+```{r}
+# Write code here
+cleaned_data <- rearrange_country_pcsales
+
+write_csv(cleaned_data,path="data/my_clean_data.csv")
+```
+
+# Making a summary visualization
+
+```{r}
+#| label: barplot
+#| fig.width: 7
+#| fig.height: 6
+
+```
+
+```{r}
+View(cleaned_data)
+```
+
+```{r}
+library(dplyr)
+library(forcats)
+
+
+df1 <- cleaned_data %>%
+    mutate(cf = ifelse(country == "United States Of America",
+                     "United States Of America",
+                     ifelse(country == "China","China","Other"))) 
+View(df1)
+```
+
+```{r}
+df1%>% 
+                    
+  mutate(cf = fct_relevel(cf, "Other", "China", "United States Of America")) %>%
+
+  ggplot(aes(fill = cf, y = sale/1000000, x = year)) +
+  geom_col() +
+  scale_fill_manual(values = c("Other" = "grey", 
+                               "China" = "yellow", 
+                               "United States Of America" = "lightblue")) +
+  theme_dark()
+
+View(cleaned_data)
+
+```
